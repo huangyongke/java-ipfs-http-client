@@ -10,8 +10,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public class IPFS {
-
-    public static final String MIN_VERSION = "0.4.3";
+    public static final Version MIN_VERSION = Version.parse("0.4.3");
     public enum PinType {all, direct, indirect, recursive}
     public List<String> ObjectTemplates = Arrays.asList("unixfs-dir");
     public List<String> ObjectPatchTypes = Arrays.asList("add-link", "rm-link", "set-data", "append-data");
@@ -52,12 +51,8 @@ public class IPFS {
         this.version = version;
         // Check IPFS is sufficiently recent
         try {
-            String ipfsVersion = version();
-            String[] parts = ipfsVersion.split("\\.");
-            String[] minParts = MIN_VERSION.split("\\.");
-            if (parts[0].compareTo(minParts[0]) < 0
-                    || parts[1].compareTo(minParts[1]) < 0
-                    || parts[2].compareTo(minParts[2]) < 0)
+            Version detected = Version.parse(version());
+            if (detected.isBefore(MIN_VERSION))
                 throw new IllegalStateException("You need to use a more recent version of IPFS! >= " + MIN_VERSION);
         } catch (IOException e) {
             throw new RuntimeException(e);
